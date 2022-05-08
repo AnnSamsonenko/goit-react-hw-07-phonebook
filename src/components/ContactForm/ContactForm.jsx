@@ -1,9 +1,7 @@
 import { Formik, ErrorMessage } from 'formik';
-import { nanoid } from 'nanoid';
 import * as yup from 'yup';
 import 'yup-phone';
-import { useSelector, useDispatch } from 'react-redux';
-import { add } from 'redux/PhonebookActions';
+import { useAddContactMutation } from 'redux/contactsApi';
 import { Button } from 'components/Button/Button';
 import { FormStyled, Input, Message, LabelStyled } from './ContactFormStyled';
 
@@ -36,22 +34,16 @@ const FormError = ({ name }) => {
 };
 
 export const ContactForm = () => {
-  const contacts = useSelector(state => state.phonebook.contacts.items);
-  const dispatch = useDispatch();
+  const [addContact, { error }] = useAddContactMutation();
 
-  const handleSubmit = ({ name, number }, { resetForm }) => {
-    const isNameInContacts = contacts.find(
-      contact => contact.name.toLowerCase() === name.toLowerCase()
-    );
-
-    if (isNameInContacts) {
-      alert(`${name} is already in contacts`);
-      return;
+  const handleSubmit = async ({ name, phone }, { resetForm }) => {
+    const contactObj = { name, phone };
+    await addContact(contactObj);
+    if (error) {
+      alert('This contact can not be added. Please update the fields');
+    } else {
+      resetForm();
     }
-
-    const contactObj = { id: nanoid(4), name, number };
-    dispatch(add(contactObj));
-    resetForm();
   };
 
   return (
@@ -72,7 +64,7 @@ export const ContactForm = () => {
           <LabelStyled htmlFor="number">Number</LabelStyled>
           <div>
             <Input name="number" type="tel" />
-            <FormError name="number" />
+            <FormError name="phone" />
           </div>
         </div>
         <Button type="submit" text={'Add contact'} />

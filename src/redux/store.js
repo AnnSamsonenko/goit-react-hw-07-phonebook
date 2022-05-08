@@ -1,16 +1,12 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import { persistedReducer } from './PhonebookReducer';
-import { persistStore } from 'redux-persist';
+import { configureStore } from '@reduxjs/toolkit';
+import { contactsApi } from './contactsApi';
+import { filterReducer } from './filterSlice';
 
 export const store = configureStore({
   reducer: {
-    phonebook: persistedReducer,
+    [contactsApi.reducerPath]: contactsApi.reducer,
+    filter: filterReducer,
   },
-  middleware: getDefaultMiddleware({
-    serializableCheck: {
-      ignoredActions: ['persist/PERSIST'],
-    },
-  }),
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware().concat(contactsApi.middleware),
 });
-
-export const persistor = persistStore(store);

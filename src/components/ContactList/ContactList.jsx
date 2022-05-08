@@ -1,13 +1,16 @@
 import { List } from './ContactListStyled';
 import { ContactsItem } from 'components/ContactsItem/ContactsItem';
 import { useSelector } from 'react-redux';
+import { useGetContactsQuery } from 'redux/contactsApi';
 
 export const ContactList = () => {
-  const contacts = useSelector(state => state.phonebook.contacts.items);
-  const filter = useSelector(state => state.phonebook.filter.keyword);
+  const { data: contacts, error } = useGetContactsQuery();
+  console.log(error);
+  const filter = useSelector(state => state.filter.value);
+
   const getFiltredContacts = () => {
     return filter
-      ? contacts.filter(({ name }) =>
+      ? contacts?.filter(({ name }) =>
           name.toLowerCase().includes(filter.toLowerCase())
         )
       : contacts;
@@ -16,11 +19,18 @@ export const ContactList = () => {
   const filtredContacts = getFiltredContacts();
 
   return (
-    <List>
-      {contacts.length > 0 &&
-        filtredContacts.map(contact => (
-          <ContactsItem key={contact.id} contact={contact} />
-        ))}
-    </List>
+    <>
+      <List>
+        {contacts?.length > 0 &&
+          !error &&
+          filtredContacts.map(contact => (
+            <ContactsItem key={contact.id} contact={contact} />
+          ))}
+      </List>
+      {error && contacts?.length > 0 && (
+        <p>Something went wrong. Please refresh the page</p>
+      )}
+      {error && contacts === undefined && <p>Your phonebook is empty</p>}
+    </>
   );
 };

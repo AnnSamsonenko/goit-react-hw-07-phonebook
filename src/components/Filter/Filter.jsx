@@ -1,6 +1,6 @@
 import { SearchInput, FilterWrapper } from './FilterStyled';
 import { LabelStyled } from 'components/ContactForm/ContactFormStyled';
-import { setFilter } from 'redux/PhonebookActions';
+import { setFilter } from 'redux/filterSlice';
 import { useDispatch } from 'react-redux';
 
 export const Filter = () => {
