@@ -5,7 +5,7 @@ import { useGetContactsQuery } from 'redux/contactsApi';
 
 export const ContactList = () => {
   const { data: contacts, error } = useGetContactsQuery();
-  console.log(error);
+
   const filter = useSelector(state => state.filter.value);
 
   const getFiltredContacts = () => {

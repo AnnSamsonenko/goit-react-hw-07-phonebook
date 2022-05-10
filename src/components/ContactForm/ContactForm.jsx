@@ -4,7 +4,7 @@ import 'yup-phone';
 import { useAddContactMutation } from 'redux/contactsApi';
 import { Button } from 'components/Button/Button';
 import { FormStyled, Input, Message, LabelStyled } from './ContactFormStyled';
-
+import { useGetContactsQuery } from 'redux/contactsApi';
 const phoneRegExp =
   /^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
 
@@ -35,9 +35,20 @@ const FormError = ({ name }) => {
 
 export const ContactForm = () => {
   const [addContact, { error }] = useAddContactMutation();
+  const { data: contacts } = useGetContactsQuery();
 
   const handleSubmit = async ({ name, phone }, { resetForm }) => {
     const contactObj = { name, phone };
+
+    const isNameInContacts = contacts?.find(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (isNameInContacts) {
+      alert(`${name} is already in contacts`);
+      return;
+    }
+
     await addContact(contactObj);
     if (error) {
       alert('This contact can not be added. Please update the fields');
