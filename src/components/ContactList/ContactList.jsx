@@ -5,7 +5,6 @@ import { useGetContactsQuery } from 'redux/contactsApi';
 
 export const ContactList = () => {
   const { data: contacts, error } = useGetContactsQuery();
-
   const filter = useSelector(state => state.filter.value);
 
   const getFiltredContacts = () => {
@@ -27,10 +26,10 @@ export const ContactList = () => {
             <ContactsItem key={contact.id} contact={contact} />
           ))}
       </List>
-      {error && contacts?.length > 0 && (
+      {error && contacts?.length === 0 && (
         <p>Something went wrong. Please refresh the page</p>
       )}
-      {error && contacts === undefined && <p>Your phonebook is empty</p>}
+      {error?.status === 404 && <p>Your phonebook is empty</p>}
     </>
   );
 };
